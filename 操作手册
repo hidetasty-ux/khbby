@@ -1,0 +1,24 @@
+Pet-Sileme (宠爱往生) - 宠物殡葬 O2O 平台原型
+本项目是对标“饿了么”逻辑的宠物殡葬服务平台原型，旨在通过互联网手段解决宠物身后事的信息不对称问题。
+
+核心架构
+Backend: Node.js + Express + Prisma (ORM) + SQLite
+Frontend: Flutter (Mobile UI)
+本地启动指南
+1. 后端部署
+进入目录：cd pet-sileme/backend
+安装依赖：npm install
+初始化数据库：
+
+npx prisma generate
+npx prisma db push
+启动服务：node index.js
+API 地址：http://localhost:3000
+2. 前端部署
+确保已安装 Flutter 环境。
+进入目录：cd pet-sileme/frontend
+运行应用：flutter run
+对标饿了么的核心逻辑
+即时性：通过 LBS 定位实现快速响应（30-60分钟上门）。
+透明化：所有服务明码标价，拒绝传统殡葬的“隐形消费”。
+闭环化：从下单、接灵、火化到纪念品回寄，全程状态可视化跟踪。
