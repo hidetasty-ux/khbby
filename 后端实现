@@ -1,0 +1,55 @@
+const express = require('express');
+const { PrismaClient } = require('@prisma/client');
+const cors = require('cors');
+
+const prisma = new PrismaClient();
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+/**
+ * 核心逻辑：创建宠物殡葬订单
+ * 对标饿了么：用户选择服务 -> 系统匹配服务商 -> 生成订单
+ */
+app.post('/api/orders', async (req, res) => {
+  try {
+    const { userId, providerId, serviceIds, petId, totalPrice } = req.body;
+    
+    const order = await prisma.order.create({
+      data: {
+        userId: parseInt(userId),
+        providerId: parseInt(providerId),
+        petId: parseInt(petId),
+        status: 'PENDING',
+        totalPrice: parseFloat(totalPrice),
+        // 记录选中的具体服务项
+        services: {
+          connect: serviceIds.map(id => ({ id: parseInt(id) }))
+        }
+      },
+      include: {
+        user: true,
+        provider: true,
+        pet: true
+      }
+    });
+
+    res.json({ success: true, message: "订单已同步至附近服务商", order });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 获取所有服务商及其提供的服务菜单
+app.get('/api/providers', async (req, res) => {
+  const providers = await prisma.provider.findMany({
+    include: { services: true }
+  });
+  res.json(providers);
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`[Pet-Sileme] 后端 API 已启动: http://localhost:${PORT}`);
+});
